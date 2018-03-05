@@ -11,6 +11,7 @@ webApp class
 """
 
 import socket
+import random
 
 
 class webApp:
@@ -23,8 +24,12 @@ class webApp:
 
     def parse(self, request):
         """Parse the received request, extracting the relevant information."""
+        try:
+            resource = request.split()[1].split("/")[1]
+        except IndexError:
+            resource = ""
+        return resource
 
-        return None
 
     def process(self, parsedRequest):
         """Process the relevant elements of the request.
@@ -32,7 +37,12 @@ class webApp:
         Returns the HTTP code for the reply, and an HTML page.
         """
 
-        return ("200 OK", "<html><body><h1>It works!</h1></body></html>")
+
+
+        number = random.randint(0, 1e7)
+        answer = "<html><body><h1>Hola, </h1><a href='http://localhost:1234/" + str(number) +\
+                 "'>Dame otra</a></body></html>\r\n"
+        return ("200 OK", answer)
 
     def __init__(self, hostname, port):
         """Initialize the web application."""
@@ -55,10 +65,11 @@ class webApp:
             request = recvSocket.recv(2048).decode('utf-8')
             print(request)
             parsedRequest = self.parse(request)
-            (returnCode, htmlAnswer) = self.process(parsedRequest)
-            print('Answering back...')
-            recvSocket.send(bytes("HTTP/1.1 " + returnCode + " \r\n\r\n"
-                            + htmlAnswer + "\r\n", 'utf-8'))
+            if parsedRequest not in ["favicon.ico", ""]:
+                (returnCode, htmlAnswer) = self.process(parsedRequest)
+                print('Answering back...')
+                recvSocket.send(bytes("HTTP/1.1 " + returnCode + " \r\n\r\n"
+                                + htmlAnswer + "\r\n", 'utf-8'))
             recvSocket.close()
 
 if __name__ == "__main__":
