@@ -30,18 +30,15 @@ class webApp:
             resource = ""
         return resource
 
-
     def process(self, parsedRequest):
         """Process the relevant elements of the request.
 
         Returns the HTTP code for the reply, and an HTML page.
         """
 
-
-
         number = random.randint(0, 1e7)
-        answer = "<html><body><h1>Hola, </h1><a href='http://localhost:1234/" + str(number) +\
-                 "'>Dame otra</a></body></html>\r\n"
+        answer = "<html><body><h1>Hola, </h1><a href='http://localhost:" + \
+                 "1234/" + str(number) + "'>Dame otra</a></body></html>\r\n"
         return ("200 OK", answer)
 
     def __init__(self, hostname, port):
@@ -68,8 +65,8 @@ class webApp:
             if parsedRequest not in ["favicon.ico", ""]:
                 (returnCode, htmlAnswer) = self.process(parsedRequest)
                 print('Answering back...')
-                recvSocket.send(bytes("HTTP/1.1 " + returnCode + " \r\n\r\n"
-                                + htmlAnswer + "\r\n", 'utf-8'))
+                recvSocket.send(bytes("HTTP/1.1 " + returnCode + " \r\n\r\n" +
+                                htmlAnswer + "\r\n", 'utf-8'))
             recvSocket.close()
 
 if __name__ == "__main__":
